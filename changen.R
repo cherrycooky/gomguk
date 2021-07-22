@@ -213,4 +213,14 @@ return(list(beta = beta, beta.1 = beta.1 , beta.2 = beta.2, theta_list =theta_li
 }
 
 
-k<-change_n(1000)
+t.list=list()
+for(i in 1:30){
+if(i==1){tic("looop")}
+k<-change_n(200)
+t.list[[i]]=k$theta_list
+if(i==1){toc()}
+}
+
+
+
+
