@@ -1,3 +1,4 @@
+#######Simulation 1#############
 #Create beta hat
 n=20
 p=3
@@ -100,10 +101,15 @@ for(i in 1:1000){
 }
 
 hist(theta_list_0_c3,breaks=8)
+par(mfrow=c(1,3))
+hist(theta_list_0_c1,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_c2,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_c3,main = "case3", xlab="theta", breaks=8)
+cov(X.g[,-1])
+cor(X.g[,-1])
 
 
-
-
+############Simulation 2 ##########
 #####exactly same as above, but with no round 
 
 #Create beta hat
@@ -209,12 +215,15 @@ for(i in 1:1000){
 
 hist(theta_list_0_c6,breaks=8)
 
+par(mfrow=c(1,3))
+hist(theta_list_0_c4,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_c5,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_c6,main = "case3", xlab="theta", breaks=8)
 
 
 
 
-
-#################sec####
+#################Simulation 3########
 ##########
 
 #Create beta hat
@@ -332,7 +341,12 @@ for(i in 1:1000){
 
 hist(theta_list_0_cc3,breaks = 8)
 
-##############third
+par(mfrow=c(1,3))
+hist(theta_list_0_cc1,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_cc2,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_cc3,main = "case3", xlab="theta", breaks=8)
+
+##############Simulation 4 ############
 #get beta hat from data (realtively low correlation)
 ###If b(X) \in col(A(X)) and rounded. & X,Y from air data (highly correlated)
 beta.g <- lm(Y.air~cbind(rep(1,n),X.air[,c(5,6,11)])+0)$coef
@@ -406,10 +420,10 @@ hist(theta_list_0_ccc2,breaks = 8)
 theta_list_0_ccc3=c()
 d_list_0_ccc3=c()
 cor.mat = cor(X.air[,c(5,6,11)])
-cor.mat
+
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rmvnorm(n*p,cor=cor.mat))
+  X <- cbind(rep(1,n),rmvnorm(n*p,sigma =cor.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -430,9 +444,13 @@ for(i in 1:1000){
 
 hist(theta_list_0_ccc3,breaks = 8)
 
+par(mfrow=c(1,3))
+hist(theta_list_0_ccc1,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_ccc2,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_ccc3,main = "case3", xlab="theta", breaks=8)
 
 
-#######fourth
+#######Simulation 5 #############
 #random fake betas
 
 ###If b(X) \notin col(A(X)) beta ~ N
@@ -464,5 +482,7 @@ for(i in 1:300){
   d_list_cccc1[i] = D_X
 }
 
-hist(theta_list_cccc1)
+hist(theta_list_cccc1, breaks=8, main = "Simulation 5", xlab="theta")
+
+
 
