@@ -3,7 +3,7 @@
 n=20
 p=3
 # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-X.g <- cbind(rep(1,n),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-3,3)))
+X.g <- cbind(rep(1,n),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-5,5)))
 cov(X.g[,-1])
 Y <- rnorm(n,mean=runif(1,-5,5),sd=10)
 # coef.Y <- Y
@@ -105,6 +105,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_c1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_c2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_c3,main = "case3", xlab="theta", breaks=8)
+text(10,250,labels="simulation 5")
 cov(X.g[,-1])
 cor(X.g[,-1])
 
@@ -219,6 +220,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_c4,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_c5,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_c6,main = "case3", xlab="theta", breaks=8)
+text(10,400,labels="simulation 2")
 
 
 
@@ -343,6 +345,8 @@ par(mfrow=c(1,3))
 hist(theta_list_0_cc1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_cc2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_cc3,main = "case3", xlab="theta", breaks=8)
+text(40,500,labels="simulation 3")
+
 
 ##############Simulation 4 ############
 #get beta hat from data (realtively low correlation)
@@ -445,6 +449,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_ccc1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_ccc2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_ccc3,main = "case3", xlab="theta", breaks=8)
+text(20,600,labels="simulation 4")
 
 
 #######Simulation 5 #############
@@ -479,7 +484,8 @@ for(i in 1:300){
   d_list_cccc1[i] = D_X
 }
 
+par(mfrow=c(1,1))
 hist(theta_list_cccc1, breaks=8, main = "Simulation 5", xlab="theta")
-
+text(70,60,labels="simulation 5")
 
 
