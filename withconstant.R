@@ -81,7 +81,7 @@ d_list_0_c3=c()
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
   # X <- cbind(rep(1,n),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-3,3)))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma=cov(X.g[,-1])))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.g[,-1],2,mean),Sigma=cov(X.g[,-1])))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -194,7 +194,7 @@ d_list_0_c6=c()
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
   # X <- cbind(rep(1,n),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-5,5)),rnorm(n,mean=runif(1,-3,3)))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma=cov(X.g[,-1])))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.g[,-1],2,mean),Sigma=cov(X.g[,-1])))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -226,7 +226,7 @@ hist(theta_list_0_c6,main = "case3", xlab="theta", breaks=8)
 #################Simulation 3########
 ##########
 
-#Create beta hat
+#Generate beta hat
 
 p=3
 air <- read_excel("air.xlsx")
@@ -291,7 +291,7 @@ cov.mat = cov(X.air[,c(1,3,4)])
 cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma=cov.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -312,15 +312,13 @@ for(i in 1:1000){
 
 hist(theta_list_0_cc2,breaks = 8)
 
-##Case3   Give X correaltion structure
+##Case3   Give X covariance structure + mean structure
 
 theta_list_0_cc3=c()
 d_list_0_cc3=c()
-cor.mat = cor(X.air[,c(1,3,4)])
-cor.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma=cor.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -393,7 +391,7 @@ cov.mat = cov(X.air[,c(5,6,11)])
 cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma=cov.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -415,15 +413,14 @@ for(i in 1:1000){
 hist(theta_list_0_ccc2,breaks = 8)
 
 
-##Case3   Give X correlation structure
+##Case3   Give X covariance structure and mean structure
 
 theta_list_0_ccc3=c()
 d_list_0_ccc3=c()
-cor.mat = cor(X.air[,c(5,6,11)])
 
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rmvnorm(n*p,sigma =cor.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(5,6,11)],2,mean),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
