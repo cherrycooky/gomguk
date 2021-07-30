@@ -105,7 +105,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_c1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_c2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_c3,main = "case3", xlab="theta", breaks=8)
-text(10,250,labels="simulation 5")
+text(10,250,labels="simulation 1")
 cov(X.g[,-1])
 cor(X.g[,-1])
 
