@@ -74,7 +74,7 @@ for(i in 1:1000){
 
 hist(theta_list_0_c2,breaks = 8)
 
-#Case3 use exact covariance structure
+#Case3 use exact mean vector and covariance structure
 theta_list_0_c3=c()
 d_list_0_c3=c()
 
@@ -105,7 +105,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_c1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_c2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_c3,main = "case3", xlab="theta", breaks=8)
-text(10,250,labels="simulation 1")
+text(4,250,labels="simulation 1")
 cov(X.g[,-1])
 cor(X.g[,-1])
 
@@ -220,7 +220,7 @@ par(mfrow=c(1,3))
 hist(theta_list_0_c4,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_c5,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_c6,main = "case3", xlab="theta", breaks=8)
-text(10,400,labels="simulation 1'")
+text(5,250,labels="simulation 1'")
 
 
 
@@ -244,9 +244,12 @@ n = length(Y.air)
 corrplot(cor(X.air),method="number")
 #highly correlated
 corrplot(cor(X.air[,c(1,3,4)]),method="number")
+# cov(X.air[,c(1,3,4)])
+# det(cov(X.air[,c(1,3,4)]))
 #low correlated
 corrplot(cor(X.air[,c(5,6,11)]),method="number")
-
+# cov(X.air[,c(5,6,11)])
+# det(cov(X.air[,c(5,6,11)]))
 #get beta hat from data
 ###If b(X) \in col(A(X)) and rounded. & X,Y from air data (highly correlated)
 beta.g <- lm(Y.air~cbind(rep(1,n),X.air[,c(1,3,4)])+0)$coef
@@ -341,11 +344,39 @@ for(i in 1:1000){
 
 hist(theta_list_0_cc3,breaks = 8)
 
-par(mfrow=c(1,3))
+##Case4   Give X + mean structure
+
+theta_list_0_cc4=c()
+d_list_0_cc4=c()
+for(i in 1:1000){
+  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=diag(rep(1,3))))
+  
+  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
+  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
+  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
+  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  
+  b = as.vector(rbind(b.1,b.2,b.3,b.4))
+  
+  # qr(cbind(A,b))$rank
+  # qr(A)$rank
+  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
+  D_X = t(b-b_p)%*%(b-b_p)
+  theta = rad2deg(acos(cosine(b,b_p)))
+  theta_list_0_cc4[i] = theta
+  d_list_0_cc4[i] = D_X
+}
+
+hist(theta_list_0_cc4,breaks = 8)
+
+par(mfrow=c(1,4))
 hist(theta_list_0_cc1,main = "case1", xlab="theta", breaks=8)
 hist(theta_list_0_cc2,main = "case2", xlab="theta", breaks=8)
 hist(theta_list_0_cc3,main = "case3", xlab="theta", breaks=8)
-text(40,500,labels="simulation 2")
+hist(theta_list_0_cc4,main = "case4", xlab="theta", breaks=8)
+text(40,350,labels="simulation 2")
 
 
 #################Simulation 2'########
@@ -382,41 +413,11 @@ beta.2 <- beta.2.g
 
 ##Case1   Use X ~ N(0,1) (no structure)
 
-theta_list_0_cc4=c()
-d_list_0_cc4=c()
+theta_list_0_cc5=c()
+d_list_0_cc5=c()
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
   X <- cbind(rep(1,n),rnorm(n),rnorm(n),rnorm(n))
-  
-  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
-  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
-  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
-  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
-  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
-  
-  b = as.vector(rbind(b.1,b.2,b.3,b.4))
-  
-  # qr(cbind(A,b))$rank
-  # qr(A)$rank
-  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
-  D_X = t(b-b_p)%*%(b-b_p)
-  theta = rad2deg(acos(cosine(b,b_p)))
-  theta_list_0_cc4[i] = theta
-  d_list_0_cc4[i] = D_X
-}
-
-hist(theta_list_0_cc4,breaks = 8)
-
-
-##Case2   Give X covariance structure
-
-theta_list_0_cc5=c()
-d_list_0_cc5=c()
-cov.mat = cov(X.air[,c(1,3,4)])
-cov.mat
-for(i in 1:1000){
-  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -437,13 +438,16 @@ for(i in 1:1000){
 
 hist(theta_list_0_cc5,breaks = 8)
 
-##Case3   Give X covariance structure + mean structure
+
+##Case2   Give X covariance structure
 
 theta_list_0_cc6=c()
 d_list_0_cc6=c()
+cov.mat = cov(X.air[,c(1,3,4)])
+cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=cov.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -464,10 +468,66 @@ for(i in 1:1000){
 
 hist(theta_list_0_cc6,breaks = 8)
 
-par(mfrow=c(1,3))
-hist(theta_list_0_cc4,main = "case1", xlab="theta", breaks=8)
-hist(theta_list_0_cc5,main = "case2", xlab="theta", breaks=8)
-hist(theta_list_0_cc6,main = "case3", xlab="theta", breaks=8)
+##Case3   Give X covariance structure + mean structure
+
+theta_list_0_cc7=c()
+d_list_0_cc7=c()
+for(i in 1:1000){
+  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=cov.mat))
+  
+  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
+  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
+  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
+  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  
+  b = as.vector(rbind(b.1,b.2,b.3,b.4))
+  
+  # qr(cbind(A,b))$rank
+  # qr(A)$rank
+  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
+  D_X = t(b-b_p)%*%(b-b_p)
+  theta = rad2deg(acos(cosine(b,b_p)))
+  theta_list_0_cc7[i] = theta
+  d_list_0_cc7[i] = D_X
+}
+
+hist(theta_list_0_cc7,breaks = 8)
+
+##Case4   Give X + mean structure
+
+theta_list_0_cc8=c()
+d_list_0_cc8=c()
+for(i in 1:1000){
+  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=diag(rep(1,3))))
+  
+  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
+  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
+  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
+  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  
+  b = as.vector(rbind(b.1,b.2,b.3,b.4))
+  
+  # qr(cbind(A,b))$rank
+  # qr(A)$rank
+  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
+  D_X = t(b-b_p)%*%(b-b_p)
+  theta = rad2deg(acos(cosine(b,b_p)))
+  theta_list_0_cc8[i] = theta
+  d_list_0_cc8[i] = D_X
+}
+
+hist(theta_list_0_cc8,breaks = 8)
+
+par(mfrow=c(1,4))
+hist(theta_list_0_cc5,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_cc6,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_cc7,main = "case3", xlab="theta", breaks=8)
+hist(theta_list_0_cc8,main = "case4", xlab="theta", breaks=8)
+text(50,300,labels="simulation 2'")
 
 
 ##############Simulation 3 ############
@@ -567,31 +627,14 @@ for(i in 1:1000){
 
 hist(theta_list_0_ccc3,breaks = 8)
 
-par(mfrow=c(1,3))
-hist(theta_list_0_ccc1,main = "case1", xlab="theta", breaks=8)
-hist(theta_list_0_ccc2,main = "case2", xlab="theta", breaks=8)
-hist(theta_list_0_ccc3,main = "case3", xlab="theta", breaks=8)
-text(20,600,labels="simulation 3")
-
-
-##############Simulation 3' ############
-#get beta hat from data (realtively low correlation)
-###If b(X) \in col(A(X)) and rounded. & X,Y from air data (highly correlated)
-beta.g <- lm(Y.air~cbind(rep(1,n),X.air[,c(5,6,11)])+0)$coef
-beta <- beta.g
-beta.1.g <- lm(Y.air~cbind(rep(1,n),X.air[,5])+0)$coef
-beta.1 <- beta.1.g
-beta.2.g <- lm(Y.air~X.air[,c(6,11)]+0)$coef
-beta.2 <- beta.2.g
-
-
-##Case1   Use X ~ N(0,1) (no structure)
+##Case4   Give X mean structure
 
 theta_list_0_ccc4=c()
 d_list_0_ccc4=c()
+
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),rnorm(n),rnorm(n),rnorm(n))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(5,6,11)],2,mean),Sigma=diag(rep(1,3))))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -612,16 +655,32 @@ for(i in 1:1000){
 
 hist(theta_list_0_ccc4,breaks = 8)
 
+par(mfrow=c(1,4))
+hist(theta_list_0_ccc1,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_ccc2,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_ccc3,main = "case3", xlab="theta", breaks=8)
+hist(theta_list_0_ccc4,main = "case4", xlab="theta", breaks=8)
+text(4,270,labels="simulation 3")
 
-##Case2   Give X covariance structure
+
+##############Simulation 3' ############
+#get beta hat from data (realtively low correlation)
+###If b(X) \in col(A(X)) and rounded. & X,Y from air data (highly correlated)
+beta.g <- lm(Y.air~cbind(rep(1,n),X.air[,c(5,6,11)])+0)$coef
+beta <- beta.g
+beta.1.g <- lm(Y.air~cbind(rep(1,n),X.air[,5])+0)$coef
+beta.1 <- beta.1.g
+beta.2.g <- lm(Y.air~X.air[,c(6,11)]+0)$coef
+beta.2 <- beta.2.g
+
+
+##Case1   Use X ~ N(0,1) (no structure)
 
 theta_list_0_ccc5=c()
 d_list_0_ccc5=c()
-cov.mat = cov(X.air[,c(5,6,11)])
-cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
+  X <- cbind(rep(1,n),rnorm(n),rnorm(n),rnorm(n))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -643,14 +702,15 @@ for(i in 1:1000){
 hist(theta_list_0_ccc5,breaks = 8)
 
 
-##Case3   Give X covariance structure and mean structure
+##Case2   Give X covariance structure
 
 theta_list_0_ccc6=c()
 d_list_0_ccc6=c()
-
+cov.mat = cov(X.air[,c(5,6,11)])
+cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(5,6,11)],2,mean),Sigma=cov.mat))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=c(0,0,0),Sigma=cov.mat))
   
   A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
   b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
@@ -669,12 +729,70 @@ for(i in 1:1000){
   d_list_0_ccc6[i] = D_X
 }
 
-hist(theta_list_0_ccc3,breaks = 8)
+hist(theta_list_0_ccc6,breaks = 8)
 
-par(mfrow=c(1,3))
-hist(theta_list_0_ccc4,main = "case1", xlab="theta", breaks=8)
-hist(theta_list_0_ccc5,main = "case2", xlab="theta", breaks=8)
-hist(theta_list_0_ccc6,main = "case3", xlab="theta", breaks=8)
+
+##Case3   Give X covariance structure and mean structure
+
+theta_list_0_ccc7=c()
+d_list_0_ccc7=c()
+
+for(i in 1:1000){
+  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(5,6,11)],2,mean),Sigma=cov.mat))
+  
+  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
+  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
+  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
+  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  
+  b = as.vector(rbind(b.1,b.2,b.3,b.4))
+  
+  # qr(cbind(A,b))$rank
+  # qr(A)$rank
+  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
+  D_X = t(b-b_p)%*%(b-b_p)
+  theta = rad2deg(acos(cosine(b,b_p)))
+  theta_list_0_ccc7[i] = theta
+  d_list_0_ccc7[i] = D_X
+}
+
+hist(theta_list_0_ccc7,breaks = 8)
+
+##Case4   Give X + mean structure
+
+theta_list_0_ccc8=c()
+d_list_0_ccc8=c()
+for(i in 1:1000){
+  # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
+  X <- cbind(rep(1,n),mvrnorm(n*p,mu=apply(X.air[,c(1,3,4)],2,mean),Sigma=diag(rep(1,3))))
+  
+  A = rbind(t(X[,c(1,2)]),t(X[,c(3,4)]),t(X[,c(1,2)]),t(X[,c(3,4)]))
+  b.1 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta.1
+  b.2 = t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta.2
+  b.3 = t(X[,c(1,2)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(1,2)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  b.4 = t(X[,c(3,4)])%*%X[,c(1,2)]%*%beta[c(1,2)] + t(X[,c(3,4)])%*%X[,c(3,4)]%*%beta[c(3,4)]
+  
+  b = as.vector(rbind(b.1,b.2,b.3,b.4))
+  
+  # qr(cbind(A,b))$rank
+  # qr(A)$rank
+  b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
+  D_X = t(b-b_p)%*%(b-b_p)
+  theta = rad2deg(acos(cosine(b,b_p)))
+  theta_list_0_ccc8[i] = theta
+  d_list_0_ccc8[i] = D_X
+}
+
+hist(theta_list_0_ccc8,breaks = 8)
+
+par(mfrow=c(1,4))
+hist(theta_list_0_ccc5,main = "case1", xlab="theta", breaks=8)
+hist(theta_list_0_ccc6,main = "case2", xlab="theta", breaks=8)
+hist(theta_list_0_ccc7,main = "case3", xlab="theta", breaks=8)
+hist(theta_list_0_ccc8,main = "case4", xlab="theta", breaks=8)
+text(64.028,330,labels="Simulation 3'")
 
 
 
