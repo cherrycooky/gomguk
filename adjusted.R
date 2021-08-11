@@ -457,6 +457,6 @@ for(i in 1:1000){
 }
 
 par(mfrow=c(1,2))
-hist(theta_list_aaaa1, breaks=8, main = "Simulation 4", xlab="theta")
-hist(theta_list_aaaa2, breaks=8, main = "Simulation 4", xlab="theta")
+hist(theta_list_aaaa1, breaks=8, main = "Case 1", xlab="theta")
+hist(theta_list_aaaa2, breaks=8, main = "Case 2", xlab="theta")
 
