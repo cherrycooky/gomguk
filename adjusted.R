@@ -1,3 +1,10 @@
+library(pracma)
+library(expm)
+library(readxl)
+library(corrplot)
+library(mvtnorm)
+library(tictoc)
+library(lsa)
 #######Simulation 1############# (n=20, p=2)
 #Create beta hat
 n=20
@@ -174,7 +181,7 @@ cov.mat = cov(X.air[,c(3,4)])
 cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=c(0,0),Sigma=cov.mat)
+  X <- mvrnorm(n,mu=c(0,0),Sigma=cov.mat)
   X <- scale(X,scale=F)
   X.1 = X[,1]
   X.2 = X[,2]
@@ -201,7 +208,7 @@ theta_list_aa3=c()
 d_list_aa3=c()
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=apply(X.air[,c(3,4)],2,mean),Sigma=cov.mat)
+  X <- mvrnorm(n,mu=apply(X.air[,c(3,4)],2,mean),Sigma=cov.mat)
   X <- scale(X,scale=F)
   X.1 = X[,1]
   X.2 = X[,2]
@@ -228,7 +235,7 @@ theta_list_aa4=c()
 d_list_aa4=c()
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=apply(X.air[,c(3,4)],2,mean),Sigma=diag(rep(1,2)))
+  X <- mvrnorm(n,mu=apply(X.air[,c(3,4)],2,mean),Sigma=diag(rep(1,2)))
   X <- scale(X,scale=F)
   X.1 = X[,1]
   X.2 = X[,2]
@@ -303,7 +310,7 @@ cov.mat = cov(X.air[,c(6,11)])
 cov.mat
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=c(0,0),Sigma=cov.mat)
+  X <- mvrnorm(n,mu=c(0,0),Sigma=cov.mat)
   X <- scale(X,scale=F)
   X.1 = X[,1]
   X.2 = X[,2]
@@ -331,7 +338,7 @@ d_list_aaa3=c()
 
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=apply(X.air[,c(6,11)],2,mean),Sigma=cov.mat)
+  X <- mvrnorm(n,mu=apply(X.air[,c(6,11)],2,mean),Sigma=cov.mat)
   
   X <- scale(X,scale=F)
   X.1 = X[,1]
@@ -360,7 +367,7 @@ d_list_aaa4=c()
 
 for(i in 1:1000){
   # X <- cbind(rep(1,n),matrix(rnorm(n*p),ncol=p))
-  X <- mvrnorm(n*p,mu=apply(X.air[,c(6,11)],2,mean),Sigma=diag(rep(1,2)))
+  X <- mvrnorm(n,mu=apply(X.air[,c(6,11)],2,mean),Sigma=diag(rep(1,2)))
   X <- scale(X,scale=F)
   X.1 = X[,1]
   X.2 = X[,2]
