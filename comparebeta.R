@@ -77,3 +77,6 @@ values[i] = out$value
 }
 
 cor(values,angles,method = 'spearman')
+
+
+plot(angles,values)
