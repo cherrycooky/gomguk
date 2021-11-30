@@ -26,6 +26,6 @@ get.gensa.res <- function(beta,index=list(0)){
   #   l=l+i
   #   vec.init[l]=1
   # }
-  out.ft <- GenSA(par=vec.init,lower=rep(-1,k),upper=rep(1,k),fn=betastotheta,control=list(threshold.stop = 1e-10,max.time=3000))
+  out.ft <- GenSA(par=vec.init,lower=rep(-10,k),upper=rep(10,k),fn=betastotheta,control=list(threshold.stop = 1e-9,max.time=3000))
   return(out.ft)
 }

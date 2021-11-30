@@ -158,7 +158,7 @@ Y.car = pinv(A.car)%*%b.car + (diag(rep(1,n))-pinv(A.car)%*%A.car)%*%rnorm(n)
   
 car.index = car.else$index
 beta.car[[1]]$coefficients
-lm(Y.car ~ X.car)$coef
+lm(Y.car ~ X.car[,car.index[[1]]])$coef
 
 beta.car[[2]]
 lm(Y.car ~ X.car[,car.index[[2]]])$coef

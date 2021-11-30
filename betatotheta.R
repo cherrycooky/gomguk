@@ -67,7 +67,7 @@ betastotheta <- function(vec,beta,index=list(0)){
     }
     p = length(ind)
   }
-
+  
   #pick n which satisfies n > 2p
   n = 3 * p
   chol.A = low.mat(vec)
@@ -96,30 +96,34 @@ betastotheta <- function(vec,beta,index=list(0)){
       A = rbind(A,assign.mat)
     }
   }
-  
+  j=1
   #create b 
   for(i in 1:length(index)){
     if(i==1){
       if(length(index[[i]])==1){
-        b = t(A[index[[i]],])%*%A[index[[i]],]%*%beta[[i]]
+        b = t(A[j,])%*%A[j,]%*%beta[[i]]
         bs = paste("b",i,sep="")
         assign(bs,b)
+        j=j+1
       }else{
-        b = A[index[[i]],]%*%t(A[index[[i]],])%*%beta[[i]]
+        b = A[j:(j+length(index[[i]])-1),]%*%t(A[j:(j+length(index[[i]])-1),])%*%beta[[i]]
         bs = paste("b",i,sep="")
         assign(bs,b)
+        j=j+length(index[[i]])
       }
     }else{
       if(length(index[[i]])==1){
         bs = paste("b",i,sep="")
-        assign.b = t(A[index[[i]],])%*%A[index[[i]],]%*%beta[[i]]
+        assign.b = t(A[j,])%*%A[j,]%*%beta[[i]]
         b = rbind(b,assign.b)
         assign(bs,assign.b)
+        j=j+1
       }else{
         bs = paste("b",i,sep="")
-        assign.b = A[index[[i]],]%*%t(A[index[[i]],])%*%beta[[i]]
+        assign.b = A[(j):(j+length(index[[i]])-1),]%*%t(A[(j):(j+length(index[[i]])-1),])%*%beta[[i]]
         b = rbind(b,assign.b)
         assign(bs,assign.b)
+        j=j+length(index[[i]])
       }
     }
   }
@@ -128,7 +132,7 @@ betastotheta <- function(vec,beta,index=list(0)){
   #calculate theta
   b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
   theta = rad2deg(acos(cosine(b,b_p)))
-  return(Theta=theta)
+  return(theta=theta)
 }
 
 betastotheta(vec=vec.test,beta=beta,index=index)
@@ -174,7 +178,7 @@ betastotheta_else <- function(n,vec,beta,index=list(0)){
     }
     p = length(ind)
   }
-  #pick n which satisfies n > 2p
+  #pick n which satisfies n > p
   n.X=n
   
   # vec = rnorm(p*(p+1)/2)
@@ -241,5 +245,5 @@ betastotheta_else <- function(n,vec,beta,index=list(0)){
   #calculate theta
   b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
   theta = rad2deg(acos(cosine(b,b_p)))
-  return(list(Theta=theta,X=X,A=A,b=b,index=index,n=ncol(A),p=p))
+  return(list(theta=theta,X=X,A=A,b=b,index=index,n=ncol(A),p=p))
 }
