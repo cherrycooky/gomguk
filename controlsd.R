@@ -35,17 +35,13 @@ theta.ft<-function(vec,beta=beta.t,beta.1=beta.1.t,beta.2=beta.2.t){
   b.3 = t(X.2)%*%X.2%*%beta.2
   b = as.vector(rbind(b.1,b.2,b.3))
   b_p = as.vector(A%*%pinv(t(A)%*%A)%*%t(A)%*%b)
-  D_X = t(b-b_p)%*%(b-b_p)
   theta = rad2deg(acos(cosine(b,b_p)))
   return(theta)
 }
 
 
-start.time <- Sys.time()
+
 out <- GenSA(par=c(1,0,1),lower=rep(-100,3),upper=rep(100,3),fn=theta.ft,control=list(threshold.stop = 1e-8,max.time=1200))
-end.time <- Sys.time()
-running.time <- end.time - start.time
-running.time
 tmp <- low.mat(out$par)
 res.cov <- tmp%*%t(tmp)
 
